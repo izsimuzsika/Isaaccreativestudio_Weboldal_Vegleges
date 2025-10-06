@@ -20,35 +20,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            const href = this.getAttribute('href');
+            if (href && href.length > 1) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }
         });
     });
 
-    // Clickable shapes animation
-    document.querySelectorAll('.click-shape').forEach(shape => {
-        shape.addEventListener('click', function() {
-            // Create spray effect
-            createSprayEffect(this);
-            
-            // Random animation
-            const animations = ['explode', 'slide', 'disappear'];
-            const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
-            
-            this.style.animation = `${randomAnimation} 0.5s ease-out forwards`;
-            
-            setTimeout(() => {
-                this.style.animation = '';
-                this.style.opacity = '0.6';
-            }, 1000);
-        });
-    });
 
     // Easter eggs
     document.querySelectorAll('.easter-egg').forEach(egg => {
@@ -65,7 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Handle button actions
             if (this.textContent.includes('Express Weboldalt')) {
-                window.location.href = 'mailto:ilocsmandi@gmail.com?subject=Express Weboldal Kérés&body=Sziasztok! Szeretnék egy express weboldalt rendelni 24 órán belül.';
+                document.querySelector('#contact').scrollIntoView({
+                    behavior: 'smooth'
+                });
             } else if (this.textContent.includes('Referenciákat')) {
                 document.querySelector('#portfolio').scrollIntoView({
                     behavior: 'smooth'
@@ -74,10 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Contact button
-    document.querySelector('.contact-btn').addEventListener('click', function() {
-        createSprayEffect(this);
-        window.location.href = 'mailto:ilocsmandi@gmail.com?subject=Weboldal Érdeklődés&body=Sziasztok! Szeretnék egy weboldalt rendelni.';
+    // Contact buttons
+    document.querySelectorAll('.contact-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            createSprayEffect(this);
+        });
     });
 
     // Scroll animations
