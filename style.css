@@ -41,29 +41,15 @@ body {
     height: 70px;
 }
 
-.logo-text {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    position: relative;
-    color: #000000;
-    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
-    background: url('logo_graffiti.png') no-repeat center;
-    background-size: contain;
-    padding: 10px 0;
+.logo-image {
+    height: 50px;
+    width: auto;
+    display: block;
+    transition: transform 0.3s ease;
 }
 
-.logo-text::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, #ff0066, #00ff66);
-    transform: skew(-20deg);
+.logo-image:hover {
+    transform: scale(1.05);
 }
 
 .nav-menu {
@@ -97,6 +83,22 @@ body {
     width: 100%;
 }
 
+.nav-phone {
+    background: #000000;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+.nav-phone::before {
+    display: none;
+}
+
+.nav-phone:hover {
+    background: #333333;
+}
+
 .hamburger {
     display: none;
     flex-direction: column;
@@ -119,9 +121,7 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
-    background: #ffffff url('hatter_graffiti.png') no-repeat center;
-    background-size: cover;
-    background-attachment: fixed;
+    background: #ffffff;
     overflow: hidden;
 }
 
@@ -280,109 +280,47 @@ body {
     opacity: 1;
 }
 
-.clickable-shapes {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.click-shape {
-    position: absolute;
-    pointer-events: all;
-    cursor: pointer;
-    border: 2px solid #000000;
-    opacity: 0.6;
-    transition: all 0.3s ease;
-}
-
-.click-shape:hover {
-    opacity: 1;
-    transform: scale(1.1);
-}
-
-.triangle {
-    top: 15%;
-    left: 80%;
-    width: 0;
-    height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-bottom: 30px solid #000000;
-    background: none;
-    border-width: 0 0 30px 40px;
-    border-style: solid;
-    border-color: transparent transparent #000000 transparent;
-}
-
-.arrow {
-    top: 70%;
-    left: 15%;
-    width: 40px;
-    height: 20px;
-    background: #000000;
-    position: relative;
-}
-
-.arrow::after {
-    content: '';
-    position: absolute;
-    right: -15px;
-    top: -10px;
-    width: 0;
-    height: 0;
-    border-left: 15px solid #000000;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-}
-
-.splash {
-    top: 40%;
-    right: 5%;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: url('spray_splash_1.png') no-repeat center;
-    background-size: contain;
-    border: none;
-}
-
 .spray-decoration {
     position: absolute;
     background: url('spray_texture.png') no-repeat;
     background-size: contain;
-    opacity: 0.3;
+    opacity: 1;
     pointer-events: none;
 }
 
 .spray-1 {
     top: 20%;
     left: 5%;
-    width: 100px;
-    height: 100px;
+    width: 250px;
+    height: 250px;
     background-image: url('spray_splash_1.png');
 }
 
 .spray-2 {
     bottom: 30%;
     right: 8%;
-    width: 80px;
-    height: 80px;
+    width: 200px;
+    height: 200px;
     background-image: url('spray_splash_2.png');
+}
+
+.spray-3 {
+    top: 15%;
+    right: 10%;
+    width: 220px;
+    height: 220px;
+    background-image: url('spray_splash_1.png');
 }
 
 .graffiti-arrow {
     position: absolute;
     top: 50%;
     left: 90%;
-    width: 100px;
-    height: 60px;
+    width: 200px;
+    height: 120px;
     background: url('arrow_graffiti.png') no-repeat center;
     background-size: contain;
-    opacity: 0.4;
+    opacity: 0.6;
     pointer-events: none;
 }
 
@@ -415,6 +353,7 @@ body {
 .about {
     padding: 100px 0;
     background: #ffffff;
+    position: relative;
 }
 
 .about-content {
@@ -460,6 +399,7 @@ body {
 .services {
     padding: 100px 0;
     background: #f8f8f8;
+    position: relative;
 }
 
 .services-grid {
@@ -589,12 +529,24 @@ body {
 .portfolio {
     padding: 100px 0;
     background: #ffffff;
+    position: relative;
 }
 
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 40px;
+}
+
+.portfolio-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.portfolio-card-link:hover .portfolio-card {
+    transform: rotate(0deg) translateY(-5px);
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .portfolio-card {
@@ -702,9 +654,15 @@ body {
     color: #333;
 }
 
+.contact-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 .contact-btn {
-    display: block;
-    margin: 0 auto;
+    display: inline-block;
     padding: 20px 40px;
     font-size: 1.3rem;
     font-weight: 700;
@@ -718,6 +676,7 @@ body {
     position: relative;
     transition: all 0.3s ease;
     transform: skew(-5deg);
+    text-decoration: none;
 }
 
 .contact-btn:hover {
