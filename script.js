@@ -119,6 +119,36 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 2000);
         });
     }, 5000);
+
+    // Rocket animation - launches once after 20 seconds
+    function launchRocket() {
+        const rocket = document.getElementById('rocket');
+        if (rocket && !rocket.classList.contains('rocket-flying')) {
+            rocket.classList.add('rocket-flying');
+            
+            // Play whoosh sound
+            playSound('whoosh');
+            
+            setTimeout(() => {
+                rocket.classList.remove('rocket-flying');
+                rocket.style.display = 'none';
+            }, 2500);
+        }
+    }
+    
+    // Single rocket launch after 20 seconds
+    setTimeout(launchRocket, 20000);
+
+    // Fun click effects with emojis
+    document.addEventListener('click', function(e) {
+        // Don't trigger on links or buttons
+        if (e.target.closest('a, button, .nav-link, .cta-btn')) {
+            playSound('click');
+            return;
+        }
+        
+        createClickBurst(e.clientX, e.clientY);
+    });
 });
 
 // Helper functions
@@ -232,3 +262,109 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Sound effect functions
+function playSound(type) {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        if (type === 'click') {
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        } else if (type === 'whoosh') {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.5);
+            oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 1);
+            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 1);
+        }
+    } catch (e) {
+        // Audio not supported, fail silently
+    }
+}
+
+// Click burst effect with random emojis
+function createClickBurst(x, y) {
+    const emojis = ['✨', '🌟', '💫', '⭐', '🎨', '🔥', '💥', '🎉'];
+    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    
+    const burst = document.createElement('div');
+    burst.className = 'click-burst';
+    burst.textContent = emoji;
+    burst.style.left = x + 'px';
+    burst.style.top = y + 'px';
+    burst.style.fontSize = '30px';
+    
+    document.body.appendChild(burst);
+    
+    setTimeout(() => {
+        burst.remove();
+    }, 600);
+}
+
+// Confetti effect (for special moments)
+function createConfetti() {
+    const colors = ['#ff0066', '#00ff88', '#0088ff', '#ffff00', '#ff8800'];
+    
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * window.innerWidth + 'px';
+            confetti.style.top = '-10px';
+            confetti.style.zIndex = '9999';
+            confetti.style.pointerEvents = 'none';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            confetti.style.animation = `confetti-fall ${2 + Math.random() * 2}s linear forwards`;
+            
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 4000);
+        }, i * 30);
+    }
+}
+
+// Add confetti animation
+const confettiStyle = document.createElement('style');
+confettiStyle.textContent = `
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(${window.innerHeight + 100}px) rotate(720deg);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(confettiStyle);
+
+// Easter egg: type "egyedi" to trigger confetti
+let typedKeys = '';
+document.addEventListener('keypress', function(e) {
+    typedKeys += e.key.toLowerCase();
+    if (typedKeys.includes('egyedi')) {
+        createConfetti();
+        typedKeys = '';
+    }
+    // Keep only last 10 characters
+    if (typedKeys.length > 10) {
+        typedKeys = typedKeys.slice(-10);
+    }
+});
