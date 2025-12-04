@@ -41,24 +41,80 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800;900&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=15">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Isaac Creative Studio",
+        "url": "https://isaaccreativestudio.hu",
+        "logo": "https://isaaccreativestudio.hu/logo_graffiti.png",
+        "description": "Professzionális weboldalkészítés fiatal fejlesztőtől. Modern, reszponzív HTML+CSS+JS weboldalak express kivitelezéssel.",
+        "founder": {
+            "@type": "Person",
+            "name": "Locsmándi Izsák"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+36-70-211-6354",
+            "contactType": "customer service",
+            "email": "ilocsmandi@gmail.com",
+            "availableLanguage": "Hungarian"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "serviceType": "Weboldalkészítés",
+        "provider": {
+            "@type": "Organization",
+            "name": "Isaac Creative Studio"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Hungary"
+        },
+        "description": "Professzionális HTML+CSS+JS weboldal készítés. Express kivitelezés 24 órán belül, SEO-optimalizálás, reszponzív design."
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Isaac Creative Studio - Weboldalkészítés",
+        "image": "https://isaaccreativestudio.hu/logo_graffiti.png",
+        "telephone": "+36-70-211-6354",
+        "email": "ilocsmandi@gmail.com",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "HU"
+        },
+        "priceRange": "$$"
+    }
+    </script>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="logo_graffiti.png" alt="Isaac Creative Studio" class="logo-image">
+                <a href="index.html">
+                    <img src="logo_graffiti.png" alt="Isaac Creative Studio" class="logo-image">
+                </a>
             </div>
             <div class="nav-menu" id="nav-menu">
-                <a href="#home" class="nav-link">Főoldal</a>
+                <a href="index.html" class="nav-link">Főoldal</a>
                 <a href="#about" class="nav-link">Rólam</a>
                 <a href="#services" class="nav-link">Szolgáltatások</a>
                 <a href="#why-website" class="nav-link">Mire jó?</a>
                 <a href="#portfolio" class="nav-link">Referenciák</a>
                 <a href="#contact" class="nav-link">Kapcsolat</a>
-                <a href="tel:+36702116354" class="nav-link nav-phone">📱 +36 70 211 6354</a>
             </div>
+            <a href="content_production.html" class="service-switch-btn">🎬 Videós Tartalom</a>
             <div class="hamburger" id="hamburger">
                 <span class="bar"></span>
                 <span class="bar"></span>
