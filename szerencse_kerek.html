@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Szerencsekerék - Felelős Sorsolás</title>
+    <title>Szerencsekerék</title>
     <style>
         * {
             margin: 0;
@@ -15,240 +15,254 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
-            color: #fff;
-            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 500px 1fr;
-            gap: 30px;
-            min-height: 100vh;
-            align-items: start;
-        }
-
-        @media (max-width: 1200px) {
-            .container {
-                grid-template-columns: 1fr;
-                max-width: 600px;
-            }
-        }
-
-        h1 {
-            text-align: center;
-            grid-column: 1 / -1;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            color: #ffd700;
-        }
-
-        .subtitle {
-            text-align: center;
-            grid-column: 1 / -1;
-            color: #aaa;
-            margin-bottom: 20px;
-        }
-
-        .panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .panel h2 {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: #ffd700;
             display: flex;
+            gap: 40px;
+            max-width: 1400px;
+            width: 100%;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .wheel-section {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 30px;
         }
 
         .wheel-container {
             position: relative;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
         }
 
-        .wheel-wrapper {
-            position: relative;
-            width: 450px;
-            height: 450px;
-        }
-
-        @media (max-width: 600px) {
-            .wheel-wrapper {
-                width: 320px;
-                height: 320px;
-            }
-        }
-
-        #wheel {
-            width: 100%;
-            height: 100%;
+        #wheelCanvas {
             border-radius: 50%;
             box-shadow: 
-                0 0 0 8px #ffd700,
-                0 0 0 12px #1a1a2e,
-                0 0 40px rgba(255, 215, 0, 0.3),
-                inset 0 0 30px rgba(0, 0, 0, 0.3);
-            transition: filter 0.3s;
-        }
-
-        #wheel.spinning {
-            filter: blur(0.5px);
+                0 0 0 8px #e94560,
+                0 0 0 12px #0f3460,
+                0 0 40px rgba(233, 69, 96, 0.4),
+                0 0 80px rgba(233, 69, 96, 0.2);
+            transition: transform 0.3s ease;
         }
 
         .pointer {
             position: absolute;
-            top: -15px;
+            top: -25px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-top: 40px solid #ffd700;
-            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+            border-top: 50px solid #e94560;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
             z-index: 10;
         }
 
-        .center-circle {
+        .pointer::after {
+            content: '';
             position: absolute;
-            top: 50%;
+            top: -48px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #e94560;
             border-radius: 50%;
-            box-shadow: 
-                0 0 20px rgba(255, 215, 0, 0.5),
-                inset 0 -5px 10px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            z-index: 5;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.6);
         }
 
-        .spin-btn {
-            margin-top: 30px;
-            padding: 18px 60px;
-            font-size: 1.4rem;
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 18px;
             font-weight: bold;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            color: #1a1a2e;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .spin-btn:hover:not(:disabled) {
+        .btn-spin {
+            background: linear-gradient(135deg, #e94560, #c23a51);
+            color: white;
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn-spin:hover:not(:disabled) {
             transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 12px 35px rgba(233, 69, 96, 0.5);
         }
 
-        .spin-btn:disabled {
-            opacity: 0.5;
+        .btn-spin:disabled {
+            background: #555;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
-        .names-list {
-            max-height: 500px;
+        .btn-reset {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .names-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            max-height: 600px;
             overflow-y: auto;
-            padding-right: 10px;
+            width: 300px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .names-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .names-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-        }
-
-        .names-list::-webkit-scrollbar-thumb {
-            background: #ffd700;
-            border-radius: 3px;
+        .names-panel h2 {
+            color: #e94560;
+            margin-bottom: 20px;
+            font-size: 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(233, 69, 96, 0.3);
+            padding-bottom: 10px;
         }
 
         .name-item {
             display: flex;
             align-items: center;
-            padding: 8px 12px;
+            padding: 10px;
+            border-radius: 10px;
+            transition: background 0.2s;
             margin-bottom: 5px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            transition: all 0.2s;
-            cursor: pointer;
         }
 
         .name-item:hover {
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .name-item.excluded {
-            opacity: 0.4;
-            text-decoration: line-through;
-        }
-
-        .name-item.used {
-            background: rgba(255, 215, 0, 0.1);
-            border-left: 3px solid #ffd700;
-        }
-
         .name-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             margin-right: 12px;
-            accent-color: #ffd700;
             cursor: pointer;
+            accent-color: #e94560;
         }
 
         .name-item label {
-            flex: 1;
+            color: #fff;
+            font-size: 14px;
             cursor: pointer;
-            font-size: 0.95rem;
+            flex: 1;
         }
 
-        .result-display {
-            text-align: center;
-            padding: 20px;
-            margin-top: 20px;
-            background: rgba(255, 215, 0, 0.1);
-            border-radius: 15px;
-            border: 2px solid transparent;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
+        .name-item.unchecked label {
+            color: #666;
+            text-decoration: line-through;
+        }
+
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
             justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .result-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .result-content {
+            text-align: center;
+            transform: scale(0.5);
+            transition: transform 0.5s ease;
+        }
+
+        .result-overlay.show .result-content {
+            transform: scale(1);
+        }
+
+        .result-label {
+            color: #e94560;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .result-name {
+            color: #fff;
+            font-size: 72px;
+            font-weight: bold;
+            text-shadow: 0 0 30px rgba(233, 69, 96, 0.8);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .close-result {
+            margin-top: 40px;
+            padding: 15px 50px;
+            font-size: 16px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
             transition: all 0.3s;
         }
 
-        .result-display.fake {
-            border-color: #ff6b6b;
-            animation: shake 0.5s ease-in-out;
+        .close-result:hover {
+            background: #c23a51;
+            transform: scale(1.05);
         }
 
-        .result-display.final {
-            border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.2);
-            animation: glow 1s ease-in-out infinite alternate;
+        .warning {
+            background: rgba(233, 69, 96, 0.2);
+            border: 2px solid #e94560;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .warning.show {
+            display: block;
+            animation: shake 0.5s ease;
         }
 
         @keyframes shake {
@@ -257,239 +271,97 @@
             75% { transform: translateX(10px); }
         }
 
-        @keyframes glow {
-            from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-            to { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
-        }
-
-        .result-label {
-            font-size: 0.9rem;
+        .active-count {
             color: #aaa;
-            margin-bottom: 5px;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 15px;
         }
 
-        .result-name {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffd700;
+        /* Scrollbar styling */
+        .names-panel::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .plot-twist {
-            display: none;
-            font-size: 1.5rem;
-            color: #ff6b6b;
-            animation: flash 0.3s ease-in-out 3;
-            margin: 10px 0;
-        }
-
-        @keyframes flash {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .history-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            padding: 10px 15px;
-            margin-bottom: 8px;
+        .names-panel::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .history-item .number {
-            background: #ffd700;
-            color: #1a1a2e;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .control-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .control-row label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .control-row input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #ffd700;
-        }
-
-        .control-row input[type="range"] {
-            flex: 1;
-            accent-color: #ffd700;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .btn.primary {
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            color: #1a1a2e;
-            border: none;
-            font-weight: bold;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #aaa;
-        }
-
-        .error-message {
-            background: rgba(255, 107, 107, 0.2);
-            border: 1px solid #ff6b6b;
-            color: #ff6b6b;
-            padding: 15px;
             border-radius: 10px;
-            text-align: center;
-            margin-top: 15px;
-            display: none;
         }
 
-        .sound-icon {
-            font-size: 1.2rem;
+        .names-panel::-webkit-scrollbar-thumb {
+            background: #e94560;
+            border-radius: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .names-panel {
+                width: 100%;
+                max-width: 400px;
+                max-height: 300px;
+            }
+
+            #wheelCanvas {
+                max-width: 350px;
+                max-height: 350px;
+            }
+
+            .result-name {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .btn {
+                padding: 12px 25px;
+                font-size: 14px;
+            }
+
+            .result-name {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎡 Szerencsekerék</h1>
-        <p class="subtitle">Felelős Sorsolás - Ki következik?</p>
-
-        <div class="panel names-panel">
-            <h2>📋 Névsor</h2>
-            <div class="btn-group" style="margin-bottom: 15px;">
-                <button class="btn" onclick="selectAll()">Mind bejelöl</button>
-                <button class="btn" onclick="deselectAll()">Mind kijelöl</button>
-            </div>
-            <div class="names-list" id="namesList"></div>
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-value" id="activeCount">0</div>
-                    <div class="stat-label">Aktív</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value" id="usedCount">0</div>
-                    <div class="stat-label">Felelt</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="wheel-container">
-            <div class="wheel-wrapper">
+        <div class="wheel-section">
+            <div class="wheel-container">
                 <div class="pointer"></div>
-                <canvas id="wheel" width="450" height="450"></canvas>
-                <div class="center-circle">🎯</div>
+                <canvas id="wheelCanvas" width="500" height="500"></canvas>
             </div>
-            <button class="spin-btn" id="spinBtn" onclick="spin()">🎲 Pörgetés!</button>
-            
-            <div class="result-display" id="resultDisplay">
-                <div class="result-label" id="resultLabel">Pörgess a sorsoláshoz!</div>
-                <div class="result-name" id="resultName"></div>
-                <div class="plot-twist" id="plotTwist">⚡ PLOT TWIST! ⚡</div>
+            <div class="buttons">
+                <button class="btn btn-spin" id="spinBtn">Pörgetés</button>
+                <button class="btn btn-reset" id="resetBtn">Újraindítás</button>
             </div>
-            
-            <div class="error-message" id="errorMessage"></div>
+            <div class="warning" id="warning">
+                Legalább 2 aktív név szükséges a sorsoláshoz!
+            </div>
         </div>
 
-        <div class="panel controls-panel">
-            <h2>⚙️ Beállítások</h2>
-            
-            <div class="controls">
-                <div class="control-row">
-                    <label>
-                        <input type="checkbox" id="soundEnabled" checked>
-                        <span class="sound-icon">🔊</span> Hang
-                    </label>
-                    <input type="range" id="volumeSlider" min="0" max="100" value="50">
-                </div>
-                
-                <div class="control-row">
-                    <label>
-                        <input type="checkbox" id="noRepeat">
-                        Ne ismétlődjön (amíg mindenki sorra nem kerül)
-                    </label>
-                </div>
-                
-                <div class="btn-group">
-                    <button class="btn primary" onclick="resetRound()">🔄 Kör újrakezdése</button>
-                    <button class="btn" onclick="fullReset()">🔃 Teljes reset</button>
-                </div>
-            </div>
-            
-            <h2 style="margin-top: 25px;">📜 Utolsó eredmények</h2>
-            <div class="history-list" id="historyList">
-                <p style="color: #aaa; text-align: center; padding: 20px;">Még nincs eredmény</p>
-            </div>
+        <div class="names-panel">
+            <h2>Diákok listája</h2>
+            <div id="namesList"></div>
+            <div class="active-count" id="activeCount"></div>
+        </div>
+    </div>
+
+    <div class="result-overlay" id="resultOverlay">
+        <div class="result-content">
+            <div class="result-label">A kiválasztott személy</div>
+            <div class="result-name" id="resultName"></div>
+            <button class="close-result" id="closeResult">Bezárás</button>
         </div>
     </div>
 
     <script>
-        // Teljes névsor
-        const ALL_NAMES = [
+        // Diákok nevei - könnyen szerkeszthető tömb
+        const allNames = [
             "Bancsik Alíz",
             "Czinege Annmária Amadea",
             "Dékány Kornél",
@@ -526,439 +398,439 @@
             "Tusnády Salomé Petra"
         ];
 
-        // Állapot
-        const state = {
-            names: [...ALL_NAMES],
-            present: new Set(ALL_NAMES),
-            used: new Set(),
-            history: [],
-            isSpinning: false,
-            currentRotation: 0
-        };
-
-        // Hang kezelés Web Audio API-val
+        // Állapot változók
+        let activeNames = [...allNames];
+        let isSpinning = false;
+        let currentRotation = 0;
         let audioContext = null;
 
-        function initAudio() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            return audioContext;
-        }
+        // DOM elemek
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const spinBtn = document.getElementById('spinBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const namesList = document.getElementById('namesList');
+        const warning = document.getElementById('warning');
+        const activeCount = document.getElementById('activeCount');
+        const resultOverlay = document.getElementById('resultOverlay');
+        const resultName = document.getElementById('resultName');
+        const closeResult = document.getElementById('closeResult');
 
-        function getVolume() {
-            return document.getElementById('volumeSlider').value / 100;
-        }
+        // Színpaletta a szeletekhez
+        const colors = [
+            '#e94560', '#0f3460', '#533483', '#1a1a2e',
+            '#16213e', '#7b2cbf', '#c23a51', '#3d5a80',
+            '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51',
+            '#264653', '#023e8a', '#0077b6', '#00b4d8',
+            '#8338ec', '#3a86ff', '#ff006e', '#fb5607'
+        ];
 
-        function isSoundEnabled() {
-            return document.getElementById('soundEnabled').checked;
-        }
+        // Névlista inicializálása
+        function initNamesList() {
+            namesList.innerHTML = '';
+            allNames.forEach((name, index) => {
+                const div = document.createElement('div');
+                div.className = 'name-item';
+                div.innerHTML = `
+                    <input type="checkbox" id="name${index}" checked>
+                    <label for="name${index}">${name}</label>
+                `;
+                namesList.appendChild(div);
 
-        function playTick() {
-            if (!isSoundEnabled()) return;
-            const ctx = initAudio();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            
-            osc.type = 'square';
-            osc.frequency.value = 800 + Math.random() * 400;
-            gain.gain.value = getVolume() * 0.15;
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-            
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.05);
-        }
-
-        function playSpin() {
-            if (!isSoundEnabled()) return;
-            const ctx = initAudio();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            
-            osc.type = 'sine';
-            osc.frequency.value = 200;
-            osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 2);
-            gain.gain.value = getVolume() * 0.1;
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2);
-            
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 2);
-        }
-
-        function playFakeResult() {
-            if (!isSoundEnabled()) return;
-            const ctx = initAudio();
-            
-            [400, 350, 300].forEach((freq, i) => {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.value = freq;
-                gain.gain.value = getVolume() * 0.15;
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3 + i * 0.1);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(ctx.currentTime + i * 0.1);
-                osc.stop(ctx.currentTime + 0.3 + i * 0.1);
+                const checkbox = div.querySelector('input');
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) {
+                        div.classList.remove('unchecked');
+                        if (!activeNames.includes(name)) {
+                            activeNames.push(name);
+                        }
+                    } else {
+                        div.classList.add('unchecked');
+                        activeNames = activeNames.filter(n => n !== name);
+                    }
+                    updateActiveCount();
+                    drawWheel();
+                });
             });
+            updateActiveCount();
         }
 
-        function playVictory() {
-            if (!isSoundEnabled()) return;
-            const ctx = initAudio();
-            
-            const notes = [523, 659, 784, 1047];
-            notes.forEach((freq, i) => {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.value = freq;
-                gain.gain.value = getVolume() * 0.2;
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4 + i * 0.15);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(ctx.currentTime + i * 0.15);
-                osc.stop(ctx.currentTime + 0.5 + i * 0.15);
-            });
+        // Aktív nevek számának frissítése
+        function updateActiveCount() {
+            activeCount.textContent = `Aktív nevek: ${activeNames.length} / ${allNames.length}`;
         }
 
-        // Szín generátor
-        function getColors(count) {
-            const colors = [];
-            const saturation = 70;
-            const lightness = 50;
-            for (let i = 0; i < count; i++) {
-                const hue = (i * 360 / count) % 360;
-                colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
-            }
-            return colors;
-        }
-
-        // Kerék rajzolás
+        // Kerék rajzolása
         function drawWheel() {
-            const canvas = document.getElementById('wheel');
-            const ctx = canvas.getContext('2d');
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const radius = Math.min(centerX, centerY) - 10;
-            
-            const activeNames = getActiveNames();
-            
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (activeNames.length === 0) {
-                ctx.fillStyle = '#333';
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#fff';
-                ctx.font = '20px Segoe UI';
-                ctx.textAlign = 'center';
-                ctx.fillText('Nincs aktív név', centerX, centerY);
-                return;
-            }
-            
-            const colors = getColors(activeNames.length);
-            const sliceAngle = (Math.PI * 2) / activeNames.length;
-            
             ctx.save();
             ctx.translate(centerX, centerY);
-            ctx.rotate(state.currentRotation * Math.PI / 180);
-            
-            activeNames.forEach((name, i) => {
-                const startAngle = i * sliceAngle - Math.PI / 2;
+            ctx.rotate(currentRotation);
+
+            if (activeNames.length === 0) {
+                // Üres kerék
+                ctx.beginPath();
+                ctx.arc(0, 0, radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#333';
+                ctx.fill();
+                ctx.restore();
+                return;
+            }
+
+            const sliceAngle = (Math.PI * 2) / activeNames.length;
+
+            activeNames.forEach((name, index) => {
+                const startAngle = index * sliceAngle;
                 const endAngle = startAngle + sliceAngle;
-                
-                // Szelet rajzolás
+
+                // Szelet rajzolása
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
                 ctx.arc(0, 0, radius, startAngle, endAngle);
                 ctx.closePath();
-                ctx.fillStyle = colors[i];
+                ctx.fillStyle = colors[index % colors.length];
                 ctx.fill();
                 ctx.strokeStyle = 'rgba(255,255,255,0.3)';
                 ctx.lineWidth = 2;
                 ctx.stroke();
-                
-                // Név rajzolás
+
+                // Név írása
                 ctx.save();
                 ctx.rotate(startAngle + sliceAngle / 2);
                 ctx.textAlign = 'right';
                 ctx.fillStyle = '#fff';
-                ctx.shadowColor = 'rgba(0,0,0,0.5)';
-                ctx.shadowBlur = 3;
                 
-                const fontSize = Math.min(14, 180 / activeNames.length);
-                ctx.font = `bold ${fontSize}px Segoe UI`;
+                // Betűméret dinamikus beállítása
+                const maxFontSize = 16;
+                const minFontSize = 10;
+                const fontSize = Math.max(minFontSize, Math.min(maxFontSize, 400 / activeNames.length));
+                ctx.font = `bold ${fontSize}px Segoe UI, sans-serif`;
                 
-                // Vezetéknév + keresztnév első betűje
-                const nameParts = name.split(' ');
+                // Név rövidítése ha szükséges
                 let displayName = name;
-                if (name.length > 15) {
-                    displayName = nameParts[0] + ' ' + nameParts.slice(1).map(n => n[0] + '.').join('');
+                const maxWidth = radius - 40;
+                while (ctx.measureText(displayName).width > maxWidth && displayName.length > 3) {
+                    displayName = displayName.slice(0, -4) + '...';
                 }
                 
-                ctx.fillText(displayName, radius - 15, 5);
+                ctx.fillText(displayName, radius - 20, fontSize / 3);
                 ctx.restore();
             });
-            
+
+            // Középső kör
+            ctx.beginPath();
+            ctx.arc(0, 0, 30, 0, Math.PI * 2);
+            ctx.fillStyle = '#e94560';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
             ctx.restore();
         }
 
-        // Aktív nevek lekérése
-        function getActiveNames() {
-            const noRepeat = document.getElementById('noRepeat').checked;
-            return state.names.filter(name => {
-                if (!state.present.has(name)) return false;
-                if (noRepeat && state.used.has(name)) return false;
-                return true;
+        // Audio Context inicializálása
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Kattogó hang generálása
+        function playClickSound() {
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800 + Math.random() * 400;
+            oscillator.type = 'square';
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialDecayTo = 0.01;
+            gainNode.gain.setTargetAtTime(0.001, audioContext.currentTime + 0.02, 0.01);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.05);
+        }
+
+        // Eredmény hang generálása
+        function playResultSound() {
+            if (!audioContext) return;
+            
+            const frequencies = [523.25, 659.25, 783.99, 1046.5];
+            
+            frequencies.forEach((freq, i) => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = freq;
+                oscillator.type = 'sine';
+                
+                const startTime = audioContext.currentTime + i * 0.1;
+                gainNode.gain.setValueAtTime(0.2, startTime);
+                gainNode.gain.setTargetAtTime(0.001, startTime + 0.2, 0.1);
+                
+                oscillator.start(startTime);
+                oscillator.stop(startTime + 0.4);
             });
         }
 
-        // Névsor lista renderelés
-        function renderNamesList() {
-            const container = document.getElementById('namesList');
-            const noRepeat = document.getElementById('noRepeat').checked;
+        // Kiválasztott név meghatározása
+        function getSelectedName() {
+            if (activeNames.length === 0) return null;
             
-            container.innerHTML = state.names.map((name, i) => {
-                const isPresent = state.present.has(name);
-                const isUsed = state.used.has(name);
-                let classes = 'name-item';
-                if (!isPresent) classes += ' excluded';
-                if (isUsed && noRepeat) classes += ' used';
-                
-                return `
-                    <div class="${classes}">
-                        <input type="checkbox" id="name${i}" ${isPresent ? 'checked' : ''} onchange="toggleName('${name}')">
-                        <label for="name${i}">${name}</label>
-                    </div>
-                `;
-            }).join('');
+            const sliceAngle = (Math.PI * 2) / activeNames.length;
+            // A mutató felül van (3π/2 = 270°), de a rotation ellentétes irányba megy
+            // Normalizáljuk a rotációt 0 és 2π közé
+            let normalizedRotation = currentRotation % (Math.PI * 2);
+            if (normalizedRotation < 0) normalizedRotation += Math.PI * 2;
             
-            updateStats();
+            // A mutató felül van, tehát -π/2 (vagy 3π/2) pozícióban
+            // A kerék forgásával szemben kell számolnunk
+            const pointerAngle = (Math.PI * 2 - normalizedRotation + Math.PI / 2) % (Math.PI * 2);
+            
+            const selectedIndex = Math.floor(pointerAngle / sliceAngle) % activeNames.length;
+            return activeNames[selectedIndex];
+        }
+
+        // Pörgetés animáció
+        async function spin() {
+            if (isSpinning) return;
+            if (activeNames.length < 2) {
+                warning.classList.add('show');
+                setTimeout(() => warning.classList.remove('show'), 3000);
+                return;
+            }
+
+            warning.classList.remove('show');
+            isSpinning = true;
+            spinBtn.disabled = true;
+
+            initAudio();
+
+            // Véletlenszerűen kiválasztott győztes
+            const winnerIndex = Math.floor(Math.random() * activeNames.length);
+            const winner = activeNames[winnerIndex];
+
+            // Szeletszög
+            const sliceAngle = (Math.PI * 2) / activeNames.length;
+            
+            // Cél pozíció kiszámítása (a mutató a szelet közepére mutasson)
+            // A mutató felül van (π/2 pozícióban a canvas koordinátáiban)
+            const targetSliceCenter = winnerIndex * sliceAngle + sliceAngle / 2;
+            const baseRotation = Math.PI / 2 - targetSliceCenter;
+            
+            // Teljes forgatás: több teljes kör + célpozíció
+            const extraSpins = 5 * Math.PI * 2; // 5 teljes kör
+
+            let lastSlice = -1;
+
+            // 1. fázis: Gyors indulás és lassulás
+            const phase1Duration = 3000;
+            const phase1StartTime = performance.now();
+            const phase1StartRotation = currentRotation;
+            const phase1EndRotation = phase1StartRotation + extraSpins * 0.6;
+
+            await new Promise(resolve => {
+                function animatePhase1(currentTime) {
+                    const elapsed = currentTime - phase1StartTime;
+                    const progress = Math.min(elapsed / phase1Duration, 1);
+                    
+                    // Easing: gyors indulás, lassú befejezés
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    
+                    currentRotation = phase1StartRotation + (phase1EndRotation - phase1StartRotation) * eased;
+                    drawWheel();
+
+                    // Kattogó hang
+                    const currentSlice = Math.floor((currentRotation / sliceAngle) % activeNames.length);
+                    if (currentSlice !== lastSlice) {
+                        playClickSound();
+                        lastSlice = currentSlice;
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animatePhase1);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animatePhase1);
+            });
+
+            // 2. fázis: Hirtelen újra gyorsulás
+            const phase2Duration = 1500;
+            const phase2StartTime = performance.now();
+            const phase2StartRotation = currentRotation;
+            const phase2EndRotation = phase2StartRotation + extraSpins * 0.3;
+
+            await new Promise(resolve => {
+                function animatePhase2(currentTime) {
+                    const elapsed = currentTime - phase2StartTime;
+                    const progress = Math.min(elapsed / phase2Duration, 1);
+                    
+                    // Gyors kezdés
+                    const eased = progress < 0.3 
+                        ? Math.pow(progress / 0.3, 2) * 0.5
+                        : 0.5 + (1 - Math.pow(1 - (progress - 0.3) / 0.7, 2)) * 0.5;
+                    
+                    currentRotation = phase2StartRotation + (phase2EndRotation - phase2StartRotation) * eased;
+                    drawWheel();
+
+                    const currentSlice = Math.floor((currentRotation / sliceAngle) % activeNames.length);
+                    if (currentSlice !== lastSlice) {
+                        playClickSound();
+                        lastSlice = currentSlice;
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animatePhase2);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animatePhase2);
+            });
+
+            // 3. fázis: Visszafelé pörgetés
+            const phase3Duration = 2500;
+            const phase3StartTime = performance.now();
+            const phase3StartRotation = currentRotation;
+            // Visszafelé forgatás majd megállás a célnál
+            const phase3EndRotation = phase3StartRotation - extraSpins * 0.15;
+
+            await new Promise(resolve => {
+                function animatePhase3(currentTime) {
+                    const elapsed = currentTime - phase3StartTime;
+                    const progress = Math.min(elapsed / phase3Duration, 1);
+                    
+                    // Gyors indulás, lassú befejezés
+                    const eased = 1 - Math.pow(1 - progress, 4);
+                    
+                    currentRotation = phase3StartRotation + (phase3EndRotation - phase3StartRotation) * eased;
+                    drawWheel();
+
+                    const currentSlice = Math.floor(Math.abs(currentRotation / sliceAngle) % activeNames.length);
+                    if (currentSlice !== lastSlice) {
+                        playClickSound();
+                        lastSlice = currentSlice;
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animatePhase3);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animatePhase3);
+            });
+
+            // 4. fázis: Végső pozícionálás a győztesre
+            const phase4Duration = 1500;
+            const phase4StartTime = performance.now();
+            const phase4StartRotation = currentRotation;
+            
+            // Normalizáljuk és kiszámítjuk a pontos célpozíciót
+            let normalizedCurrent = phase4StartRotation % (Math.PI * 2);
+            const fullRotations = Math.floor(phase4StartRotation / (Math.PI * 2));
+            
+            // Célpozíció: a győztes szelet közepe legyen a mutató alatt
+            let targetRotation = fullRotations * Math.PI * 2 + baseRotation;
+            
+            // Biztosítjuk, hogy a legközelebbi irányba forgassunk
+            while (targetRotation > phase4StartRotation) targetRotation -= Math.PI * 2;
+            while (phase4StartRotation - targetRotation > Math.PI) targetRotation += Math.PI * 2;
+
+            await new Promise(resolve => {
+                function animatePhase4(currentTime) {
+                    const elapsed = currentTime - phase4StartTime;
+                    const progress = Math.min(elapsed / phase4Duration, 1);
+                    
+                    // Nagyon sima lassulás
+                    const eased = 1 - Math.pow(1 - progress, 5);
+                    
+                    currentRotation = phase4StartRotation + (targetRotation - phase4StartRotation) * eased;
+                    drawWheel();
+
+                    const currentSlice = Math.floor(Math.abs(currentRotation / sliceAngle) % activeNames.length);
+                    if (currentSlice !== lastSlice && progress < 0.8) {
+                        playClickSound();
+                        lastSlice = currentSlice;
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animatePhase4);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animatePhase4);
+            });
+
+            // Eredmény megjelenítése
+            playResultSound();
+            
+            // Zoom effekt
+            canvas.style.transform = 'scale(1.1)';
+            
+            setTimeout(() => {
+                resultName.textContent = winner;
+                resultOverlay.classList.add('show');
+            }, 300);
+
+            isSpinning = false;
+            spinBtn.disabled = false;
+        }
+
+        // Reset funkció
+        function reset() {
+            if (isSpinning) return;
+            
+            currentRotation = 0;
+            canvas.style.transform = 'scale(1)';
+            resultOverlay.classList.remove('show');
+            
+            // Minden checkbox visszaállítása
+            const checkboxes = namesList.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = true;
+                cb.parentElement.classList.remove('unchecked');
+            });
+            
+            activeNames = [...allNames];
+            updateActiveCount();
             drawWheel();
         }
 
-        // Név ki/bekapcsolás
-        function toggleName(name) {
-            if (state.present.has(name)) {
-                state.present.delete(name);
-            } else {
-                state.present.add(name);
+        // Eredmény overlay bezárása
+        function closeResultOverlay() {
+            resultOverlay.classList.remove('show');
+            canvas.style.transform = 'scale(1)';
+        }
+
+        // Event listeners
+        spinBtn.addEventListener('click', spin);
+        resetBtn.addEventListener('click', reset);
+        closeResult.addEventListener('click', closeResultOverlay);
+        resultOverlay.addEventListener('click', (e) => {
+            if (e.target === resultOverlay) {
+                closeResultOverlay();
             }
-            renderNamesList();
-        }
-
-        // Mind bejelöl/kijelöl
-        function selectAll() {
-            state.names.forEach(name => state.present.add(name));
-            renderNamesList();
-        }
-
-        function deselectAll() {
-            state.present.clear();
-            renderNamesList();
-        }
-
-        // Statisztika frissítés
-        function updateStats() {
-            const active = getActiveNames().length;
-            const used = state.used.size;
-            document.getElementById('activeCount').textContent = active;
-            document.getElementById('usedCount').textContent = used;
-        }
-
-        // Előzmények renderelés
-        function renderHistory() {
-            const container = document.getElementById('historyList');
-            if (state.history.length === 0) {
-                container.innerHTML = '<p style="color: #aaa; text-align: center; padding: 20px;">Még nincs eredmény</p>';
-                return;
-            }
-            
-            container.innerHTML = state.history.slice(-10).reverse().map((name, i) => `
-                <div class="history-item">
-                    <span class="number">${state.history.length - i}</span>
-                    <span>${name}</span>
-                </div>
-            `).join('');
-        }
-
-        // Hibaüzenet
-        function showError(message) {
-            const el = document.getElementById('errorMessage');
-            el.textContent = message;
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 3000);
-        }
-
-        // Pörgetés
-        async function spin() {
-            const activeNames = getActiveNames();
-            
-            if (activeNames.length < 2) {
-                showError('Legalább 2 aktív név szükséges a sorsoláshoz!');
-                return;
-            }
-            
-            if (state.isSpinning) return;
-            state.isSpinning = true;
-            
-            const spinBtn = document.getElementById('spinBtn');
-            const resultDisplay = document.getElementById('resultDisplay');
-            const resultLabel = document.getElementById('resultLabel');
-            const resultName = document.getElementById('resultName');
-            const plotTwist = document.getElementById('plotTwist');
-            const wheel = document.getElementById('wheel');
-            
-            spinBtn.disabled = true;
-            resultDisplay.className = 'result-display';
-            plotTwist.style.display = 'none';
-            resultLabel.textContent = 'Pörgetés...';
-            resultName.textContent = '';
-            wheel.classList.add('spinning');
-            
-            // Véletlenszerű fake és valódi célpont kiválasztása
-            const fakeIndex = Math.floor(Math.random() * activeNames.length);
-            let realIndex;
-            do {
-                realIndex = Math.floor(Math.random() * activeNames.length);
-            } while (realIndex === fakeIndex && activeNames.length > 1);
-            
-            const fakeName = activeNames[fakeIndex];
-            const realName = activeNames[realIndex];
-            
-            // Animáció - kerék pörgetése
-            const sliceAngle = 360 / activeNames.length;
-            const extraRotations = 5 + Math.random() * 3;
-            const fakeTargetAngle = 360 - (fakeIndex * sliceAngle + sliceAngle / 2);
-            const totalRotation = state.currentRotation + extraRotations * 360 + fakeTargetAngle - (state.currentRotation % 360);
-            
-            playSpin();
-            
-            const duration = 4000;
-            const startTime = Date.now();
-            const startRotation = state.currentRotation;
-            let lastSlice = -1;
-            
-            function animate() {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                // Easing - lassulás
-                const easeOut = 1 - Math.pow(1 - progress, 4);
-                state.currentRotation = startRotation + (totalRotation - startRotation) * easeOut;
-                
-                // Kattogó hang
-                const currentSlice = Math.floor((state.currentRotation % 360) / sliceAngle);
-                if (currentSlice !== lastSlice && progress < 0.95) {
-                    playTick();
-                    lastSlice = currentSlice;
-                }
-                
-                drawWheel();
-                
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    wheel.classList.remove('spinning');
-                    showFakeResult(fakeName, realName);
-                }
-            }
-            
-            requestAnimationFrame(animate);
-        }
-
-        // Fake eredmény megjelenítése
-        async function showFakeResult(fakeName, realName) {
-            const resultDisplay = document.getElementById('resultDisplay');
-            const resultLabel = document.getElementById('resultLabel');
-            const resultName = document.getElementById('resultName');
-            const plotTwist = document.getElementById('plotTwist');
-            
-            // Fake eredmény
-            resultDisplay.className = 'result-display fake';
-            resultLabel.textContent = 'Majdnem ő felel...';
-            resultName.textContent = fakeName;
-            playFakeResult();
-            
-            // Várakozás
-            await new Promise(r => setTimeout(r, 2000));
-            
-            // Plot twist
-            plotTwist.style.display = 'block';
-            resultDisplay.style.animation = 'shake 0.5s ease-in-out';
-            
-            await new Promise(r => setTimeout(r, 1000));
-            
-            // Valódi eredmény
-            resultDisplay.className = 'result-display final';
-            resultDisplay.style.animation = '';
-            resultLabel.textContent = '🎉 A felelős:';
-            resultName.textContent = realName;
-            plotTwist.style.display = 'none';
-            playVictory();
-            
-            // Állapot frissítés
-            state.used.add(realName);
-            state.history.push(realName);
-            
-            renderNamesList();
-            renderHistory();
-            
-            document.getElementById('spinBtn').disabled = false;
-            state.isSpinning = false;
-            
-            // Ha mindenki felelt
-            const noRepeat = document.getElementById('noRepeat').checked;
-            if (noRepeat && getActiveNames().length === 0) {
-                showError('Mindenki sorra került! Nyomj "Kör újrakezdése" gombot.');
-            }
-        }
-
-        // Kör újrakezdése
-        function resetRound() {
-            state.used.clear();
-            renderNamesList();
-            
-            const resultDisplay = document.getElementById('resultDisplay');
-            const resultLabel = document.getElementById('resultLabel');
-            const resultName = document.getElementById('resultName');
-            
-            resultDisplay.className = 'result-display';
-            resultLabel.textContent = 'Kör újraindítva!';
-            resultName.textContent = '';
-        }
-
-        // Teljes reset
-        function fullReset() {
-            state.present = new Set(ALL_NAMES);
-            state.used.clear();
-            state.history = [];
-            state.currentRotation = 0;
-            
-            renderNamesList();
-            renderHistory();
-            
-            const resultDisplay = document.getElementById('resultDisplay');
-            const resultLabel = document.getElementById('resultLabel');
-            const resultName = document.getElementById('resultName');
-            
-            resultDisplay.className = 'result-display';
-            resultLabel.textContent = 'Pörgess a sorsoláshoz!';
-            resultName.textContent = '';
-        }
-
-        // No repeat checkbox esemény
-        document.getElementById('noRepeat').addEventListener('change', renderNamesList);
+        });
 
         // Inicializálás
-        renderNamesList();
-        renderHistory();
+        initNamesList();
         drawWheel();
     </script>
 </body>
