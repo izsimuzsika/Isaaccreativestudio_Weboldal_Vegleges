@@ -381,7 +381,6 @@
             "Lakatos Manna",
             "László Péter András",
             "Lesták Krisztián",
-            "Locsmándi Leonárd Izsák",
             "Lovász Adonika",
             "Lukács Bálint",
             "Mikics Mirkó",
@@ -586,19 +585,20 @@
             });
         }
 
-        // Kiválasztott név meghatározása
+        // Kiválasztott név meghatározása a kerék aktuális pozíciója alapján
         function getSelectedName() {
             if (activeNames.length === 0) return null;
             
             const sliceAngle = (Math.PI * 2) / activeNames.length;
-            // A mutató felül van (3π/2 = 270°), de a rotation ellentétes irányba megy
+            
             // Normalizáljuk a rotációt 0 és 2π közé
             let normalizedRotation = currentRotation % (Math.PI * 2);
             if (normalizedRotation < 0) normalizedRotation += Math.PI * 2;
             
-            // A mutató felül van, tehát -π/2 (vagy 3π/2) pozícióban
-            // A kerék forgásával szemben kell számolnunk
-            const pointerAngle = (Math.PI * 2 - normalizedRotation + Math.PI / 2) % (Math.PI * 2);
+            // A mutató felül van (-π/2 pozícióban, azaz 3π/2 = 270°)
+            // A kerék az óramutató járásával megegyezően forog (pozitív irány)
+            // Meg kell határoznunk, melyik szelet van a mutató alatt
+            const pointerAngle = (3 * Math.PI / 2 - normalizedRotation + Math.PI * 2) % (Math.PI * 2);
             
             const selectedIndex = Math.floor(pointerAngle / sliceAngle) % activeNames.length;
             return activeNames[selectedIndex];
@@ -626,13 +626,20 @@
             // Szeletszög
             const sliceAngle = (Math.PI * 2) / activeNames.length;
             
-            // Cél pozíció kiszámítása (a mutató a szelet közepére mutasson)
-            // A mutató felül van (π/2 pozícióban a canvas koordinátáiban)
-            const targetSliceCenter = winnerIndex * sliceAngle + sliceAngle / 2;
-            const baseRotation = Math.PI / 2 - targetSliceCenter;
+            // A mutató a kerék tetején van (-π/2 = 3π/2 = 270° pozícióban)
+            // A szelet közepe: winnerIndex * sliceAngle + sliceAngle / 2
+            // Ahhoz, hogy ez a szelet a mutató alá kerüljön, a keréknek annyit kell forognia,
+            // hogy a szelet közepe a 3π/2 (270°) pozícióba kerüljön
+            const sliceCenter = winnerIndex * sliceAngle + sliceAngle / 2;
             
-            // Teljes forgatás: több teljes kör + célpozíció
-            const extraSpins = 5 * Math.PI * 2; // 5 teljes kör
+            // Cél rotáció: a szelet közepének el kell jutnia a 3π/2 pozícióba
+            // rotation = 3π/2 - sliceCenter (de pozitív irányban forgatunk, több körrel)
+            const baseTargetRotation = (3 * Math.PI / 2 - sliceCenter + Math.PI * 2) % (Math.PI * 2);
+            
+            // Teljes forgatás: több teljes kör + végső pozíció
+            const totalSpins = 6; // Teljes körök száma
+            const finalRotation = currentRotation + totalSpins * Math.PI * 2 + 
+                ((baseTargetRotation - (currentRotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2));
 
             let lastSlice = -1;
 
@@ -640,7 +647,7 @@
             const phase1Duration = 3000;
             const phase1StartTime = performance.now();
             const phase1StartRotation = currentRotation;
-            const phase1EndRotation = phase1StartRotation + extraSpins * 0.6;
+            const phase1EndRotation = phase1StartRotation + (finalRotation - phase1StartRotation) * 0.5;
 
             await new Promise(resolve => {
                 function animatePhase1(currentTime) {
@@ -654,7 +661,7 @@
                     drawWheel();
 
                     // Kattogó hang
-                    const currentSlice = Math.floor((currentRotation / sliceAngle) % activeNames.length);
+                    const currentSlice = Math.floor(Math.abs(currentRotation / sliceAngle)) % activeNames.length;
                     if (currentSlice !== lastSlice) {
                         playClickSound();
                         lastSlice = currentSlice;
@@ -673,7 +680,7 @@
             const phase2Duration = 1500;
             const phase2StartTime = performance.now();
             const phase2StartRotation = currentRotation;
-            const phase2EndRotation = phase2StartRotation + extraSpins * 0.3;
+            const phase2EndRotation = phase1StartRotation + (finalRotation - phase1StartRotation) * 0.75;
 
             await new Promise(resolve => {
                 function animatePhase2(currentTime) {
@@ -688,7 +695,7 @@
                     currentRotation = phase2StartRotation + (phase2EndRotation - phase2StartRotation) * eased;
                     drawWheel();
 
-                    const currentSlice = Math.floor((currentRotation / sliceAngle) % activeNames.length);
+                    const currentSlice = Math.floor(Math.abs(currentRotation / sliceAngle)) % activeNames.length;
                     if (currentSlice !== lastSlice) {
                         playClickSound();
                         lastSlice = currentSlice;
@@ -703,12 +710,12 @@
                 requestAnimationFrame(animatePhase2);
             });
 
-            // 3. fázis: Visszafelé pörgetés
-            const phase3Duration = 2500;
+            // 3. fázis: Visszafelé pörgetés (túllövés majd vissza)
+            const phase3Duration = 2000;
             const phase3StartTime = performance.now();
             const phase3StartRotation = currentRotation;
-            // Visszafelé forgatás majd megállás a célnál
-            const phase3EndRotation = phase3StartRotation - extraSpins * 0.15;
+            const overshoot = sliceAngle * 1.5; // Túllövés
+            const phase3EndRotation = finalRotation + overshoot;
 
             await new Promise(resolve => {
                 function animatePhase3(currentTime) {
@@ -721,7 +728,7 @@
                     currentRotation = phase3StartRotation + (phase3EndRotation - phase3StartRotation) * eased;
                     drawWheel();
 
-                    const currentSlice = Math.floor(Math.abs(currentRotation / sliceAngle) % activeNames.length);
+                    const currentSlice = Math.floor(Math.abs(currentRotation / sliceAngle)) % activeNames.length;
                     if (currentSlice !== lastSlice) {
                         playClickSound();
                         lastSlice = currentSlice;
@@ -736,34 +743,23 @@
                 requestAnimationFrame(animatePhase3);
             });
 
-            // 4. fázis: Végső pozícionálás a győztesre
+            // 4. fázis: Visszafelé a végső pozícióra (korrekció)
             const phase4Duration = 1500;
             const phase4StartTime = performance.now();
             const phase4StartRotation = currentRotation;
-            
-            // Normalizáljuk és kiszámítjuk a pontos célpozíciót
-            let normalizedCurrent = phase4StartRotation % (Math.PI * 2);
-            const fullRotations = Math.floor(phase4StartRotation / (Math.PI * 2));
-            
-            // Célpozíció: a győztes szelet közepe legyen a mutató alatt
-            let targetRotation = fullRotations * Math.PI * 2 + baseRotation;
-            
-            // Biztosítjuk, hogy a legközelebbi irányba forgassunk
-            while (targetRotation > phase4StartRotation) targetRotation -= Math.PI * 2;
-            while (phase4StartRotation - targetRotation > Math.PI) targetRotation += Math.PI * 2;
 
             await new Promise(resolve => {
                 function animatePhase4(currentTime) {
                     const elapsed = currentTime - phase4StartTime;
                     const progress = Math.min(elapsed / phase4Duration, 1);
                     
-                    // Nagyon sima lassulás
+                    // Nagyon sima lassulás visszafelé
                     const eased = 1 - Math.pow(1 - progress, 5);
                     
-                    currentRotation = phase4StartRotation + (targetRotation - phase4StartRotation) * eased;
+                    currentRotation = phase4StartRotation + (finalRotation - phase4StartRotation) * eased;
                     drawWheel();
 
-                    const currentSlice = Math.floor(Math.abs(currentRotation / sliceAngle) % activeNames.length);
+                    const currentSlice = Math.floor(Math.abs(currentRotation / sliceAngle)) % activeNames.length;
                     if (currentSlice !== lastSlice && progress < 0.8) {
                         playClickSound();
                         lastSlice = currentSlice;
@@ -778,14 +774,20 @@
                 requestAnimationFrame(animatePhase4);
             });
 
-            // Eredmény megjelenítése
+            // Végső rotáció beállítása pontosan
+            currentRotation = finalRotation;
+            drawWheel();
+
+            // Eredmény megjelenítése - a tényleges kiválasztott név
+            const actualWinner = getSelectedName();
+            
             playResultSound();
             
             // Zoom effekt
             canvas.style.transform = 'scale(1.1)';
             
             setTimeout(() => {
-                resultName.textContent = winner;
+                resultName.textContent = actualWinner;
                 resultOverlay.classList.add('show');
             }, 300);
 
