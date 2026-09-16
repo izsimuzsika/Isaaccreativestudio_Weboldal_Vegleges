@@ -99,6 +99,12 @@
                     "name": "Normál weboldal",
                     "description": "Komplex, többoldalas weboldal teljes egyedi fejlesztéssel. CMS, admin felület, egyedi funkciók.",
                     "priceCurrency": "HUF"
+                },
+                {
+                    "@type": "Offer",
+                    "name": "Kisebb webalkalmazás",
+                    "description": "Kisebb, egyedi webalkalmazások készítése megegyezés szerinti áron.",
+                    "priceCurrency": "HUF"
                 }
             ]
         },
@@ -172,6 +178,11 @@
 <body>
     <div class="scanlines"></div>
     <div class="noise-overlay"></div>
+
+    <div class="announcement-bar" role="status" aria-label="Hamarosan visszatérő szolgáltatás">
+        <span class="announcement-text">HAMAROSAN ÚJRA LESZ VIDEÓS TARTALOMGYÁRTÁS SZOLGÁLTATÁS</span>
+        <button class="announcement-close" id="announcement-close" type="button" aria-label="Értesítés bezárása">&times;</button>
+    </div>
 
     <nav class="nav" id="nav">
         <div class="nav-inner">
@@ -271,8 +282,7 @@
                 </div>
                 <div class="about-img-col">
                     <div class="retro-frame">
-                        <img src="hacker_funny.jpg" alt="Webfejlesztés vicces kép – Isaac Creative Studio" class="about-img">
-                        <div class="frame-label-joke">(ez nem én vagyok 😄)</div>
+                        <img src="profilkep.jpeg" alt="Izsák profilképe – Isaac Creative Studio" class="about-img">
                     </div>
                 </div>
             </div>
@@ -311,6 +321,18 @@
                     <p class="svc-desc">Alapos, átgondolt munka. Több funkcióval és extra részletességgel.</p>
                     <div class="svc-tag">Legösszetettebb</div>
                 </div>
+            </div>
+
+            <div class="new-service">
+                <div class="new-service-mark">ÚJDONSÁG</div>
+                <div class="new-service-content">
+                    <div class="new-service-icon">&#128187;</div>
+                    <div>
+                        <h3 class="new-service-title">Kisebb webalkalmazások</h3>
+                        <p class="new-service-desc">Újdonságként már kisebb, egyedi webalkalmazások készítését is vállalom. Az ár megegyezés alapú.</p>
+                    </div>
+                </div>
+                <a href="#contact" class="new-service-link">Beszéljük át &rarr;</a>
             </div>
 
             <div class="extras">
@@ -440,7 +462,7 @@
             <div class="contact-footer">
                 <div class="container">
                     <div class="footer-row">
-                        <span class="footer-copy">&copy; Isaac Creative Studio, 2025</span>
+                        <span class="footer-copy">&copy; Isaac Creative Studio, <span id="current-year"></span></span>
                         <a href="impresszumesadatvedelem.pdf" target="_blank" class="footer-legal">Impresszum &amp; Adatvédelem</a>
                     </div>
                 </div>
