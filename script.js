@@ -5,6 +5,20 @@ document.addEventListener('DOMContentLoaded', function () {
     var darkToggle = document.getElementById('dark-toggle');
     var darkIcon = document.getElementById('dark-toggle-icon');
     var backToTop = document.getElementById('back-to-top');
+    var currentYear = document.getElementById('current-year');
+    var announcementBar = document.querySelector('.announcement-bar');
+    var announcementClose = document.getElementById('announcement-close');
+
+    if (currentYear) {
+        currentYear.textContent = new Date().getFullYear();
+    }
+
+    if (announcementBar && announcementClose) {
+        announcementClose.addEventListener('click', function () {
+            announcementBar.classList.add('is-hidden');
+            document.documentElement.classList.add('announcement-dismissed');
+        });
+    }
 
     window.addEventListener('scroll', function () {
         if (window.scrollY > 60) {
