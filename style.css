@@ -541,6 +541,7 @@ html.announcement-dismissed .nav {
 
 .retro-frame {
     position: relative;
+    overflow: hidden;
     border: var(--border);
     background: var(--ink);
     padding: 8px;
@@ -560,6 +561,7 @@ html.announcement-dismissed .nav {
     object-fit: cover;
     object-position: center;
     display: block;
+    transform: scale(1.07);
 }
 
 .frame-label {
