@@ -1,0 +1,56 @@
+/* Shared progressive enhancement for the two service pages. */
+html {
+    /* Extruded edges may extend beyond their layout boxes, never the page. */
+    overflow-x: clip;
+}
+
+:is(.hero-inner, .hero-title, .about-layout, .about-stats, .services-row,
+    .extras-grid, .pf-list, .contact-btns, .video-hero-grid,
+    .video-hero-copy h1, .video-hero-offers, .video-service-depth-grid,
+    .video-offer, .video-support-grid, .video-support-visuals,
+    .video-contact-links) {
+    perspective: 1100px;
+    perspective-origin: 50% 45%;
+}
+
+.depth-motion-ready .depth-motion-item {
+    --depth-pointer-x: 50%;
+    --depth-pointer-y: 50%;
+    translate: 0 var(--depth-scroll-y, 0px);
+    rotate: var(--depth-rotation, none);
+    isolation: auto;
+    transform-style: preserve-3d;
+    transition: opacity .7s ease, scale .7s cubic-bezier(.2,.7,.2,1),
+        box-shadow .25s ease, transform .25s ease,
+        background-color .2s ease, border-color .2s ease;
+}
+
+.depth-motion-ready .depth-motion-item[data-depth-active="true"] {
+    will-change: translate, rotate;
+}
+
+.depth-motion-ready .depth-motion-item[data-depth-state="pending"] {
+    opacity: 0;
+    scale: .88;
+}
+
+.depth-motion-ready .depth-motion-item[data-depth="subtle"][data-depth-state="pending"] {
+    scale: .97;
+}
+
+.depth-motion-ready .depth-motion-item[data-depth-state="visible"],
+.depth-motion-ready .depth-motion-item:focus-within {
+    opacity: 1;
+    scale: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .depth-motion-ready .depth-motion-item {
+        translate: none;
+        rotate: none;
+        scale: 1;
+        opacity: 1;
+        transition: none;
+        will-change: auto;
+    }
+}
